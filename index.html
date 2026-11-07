@@ -1,1 +1,125 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#211327"><title>Bois si tu as déjà… 🥂</title><style>*{box-sizing:border-box}body{margin:0;min-height:100svh;padding:18px;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 10% 10%,#78405f,transparent 36%),radial-gradient(circle at 90% 90%,#4e3977,transparent 36%),#191020;color:#fff;font-family:system-ui,-apple-system,sans-serif}.app{width:min(660px,100%);padding:clamp(20px,5vw,36px);background:#ffffff12;border:1px solid #ffffff29;border-radius:30px;box-shadow:0 25px 80px #0007;text-align:center}h1{font-size:clamp(30px,7vw,45px);letter-spacing:-1.3px;margin:8px 0}.subtitle{color:#ead9e8bd;line-height:1.5}.controls{display:flex;gap:8px;margin:24px 0 15px}.chip{flex:1;border:1px solid #ffffff38;border-radius:14px;background:#ffffff12;color:white;padding:13px 4px;font-size:14px;font-weight:800;cursor:pointer}.chip.active{background:#f5bfd8;color:#35172e}.card{min-height:255px;padding:26px 20px;border:1px solid #ffffff24;border-radius:24px;background:linear-gradient(140deg,#ffffff20,#00000020);display:flex;flex-direction:column;justify-content:center;align-items:center}.tag{font-size:12px;color:#f8c8df;letter-spacing:2px;font-weight:900;margin-bottom:18px}.question{font-size:clamp(22px,5vw,29px);font-weight:780;line-height:1.42}.primary{display:block;width:100%;border:0;border-radius:17px;padding:18px;margin-top:16px;background:#f5bfd8;color:#35172e;font-size:18px;font-weight:900;cursor:pointer}.secondary{display:block;width:100%;border:1px solid #ffffff30;border-radius:15px;padding:13px;margin-top:9px;background:#ffffff12;color:white;font-size:15px;font-weight:700;cursor:pointer}.count{font-size:13px;color:#ead9e8aa;margin-top:16px}.foot{font-size:11px;color:#ead9e88e;line-height:1.5;margin-top:12px}</style></head><body><main class="app"><div style="font-size:40px">🥂</div><h1>Bois si tu as déjà…</h1><p class="subtitle">70 nouvelles situations, des anecdotes improbables et quelques aveux à faire. 😏</p><div class="controls"><button class="chip active" data-level="mix" onclick="choose('mix')">🎲 Mélange</button><button class="chip" data-level="soft" onclick="choose('soft')">😇 Soft</button><button class="chip" data-level="spicy" onclick="choose('spicy')">🌶️ Piquant</button></div><section class="card" aria-live="polite"><div class="tag" id="tag">PRÊTS À JOUER ?</div><div class="question" id="question">Pioche une carte et découvre qui doit avouer quoi…</div></section><button class="primary" onclick="draw()">✨ QUESTION SUIVANTE</button><button class="secondary" onclick="reset()">↻ Recommencer la série</button><div class="count" id="count">0 question jouée · 70 cartes disponibles</div><div class="foot">Une petite gorgée suffit. Vous pouvez aussi jouer avec une boisson sans alcool ou passer une carte, sans justification. Ne buvez pas pour vous forcer et ne conduisez jamais après avoir bu. 💗</div></main><script>const cards={"soft":["Bois si tu as déjà donné un prénom à un objet de ta maison.","Bois si tu as déjà fait demi-tour parce que tu n'aimais pas ta tenue dans une vitrine.","Bois si tu as déjà inventé une fausse vie à un inconnu croisé dans la rue.","Bois si tu as déjà ouvert un placard trois fois en espérant qu'un nouveau goûter apparaisse.","Bois si tu as déjà préparé une réponse brillante… trois heures après la conversation.","Bois si tu as déjà fait semblant de connaître les paroles d'une chanson dans une voiture.","Bois si tu as déjà choisi un restaurant uniquement à cause de son nom.","Bois si tu as déjà caché un achat dans un sac pour éviter une remarque.","Bois si tu as déjà cherché tes lunettes alors qu'elles étaient sur ta tête.","Bois si tu as déjà pris une photo d'un plat puis oublié de la poster.","Bois si tu as déjà eu une rivalité imaginaire avec quelqu'un que tu ne connais pas.","Bois si tu as déjà répété une commande au restaurant dans ta tête avant de parler.","Bois si tu as déjà fait semblant d'être très occupé quand tu as aperçu une connaissance.","Bois si tu as déjà gardé une boîte vide « au cas où » pendant des années.","Bois si tu as déjà regardé la météo d'une ville où tu n'avais aucun projet d'aller.","Bois si tu as déjà fait un détour juste pour éviter une conversation.","Bois si tu as déjà imaginé ce que tu ferais si tu devenais célèbre demain.","Bois si tu as déjà choisi une place dans une salle pour pouvoir fuir discrètement.","Bois si tu as déjà eu une théorie improbable sur un voisin ou un collègue.","Bois si tu as déjà fait semblant de comprendre les règles d'un jeu.","Bois si tu as déjà gardé un emballage parce qu'il était trop joli pour être jeté.","Bois si tu as déjà envoyé un vocal de deux minutes pour raconter une chose de dix secondes.","Bois si tu as déjà fait une liste de choses à faire puis oublié de la regarder.","Bois si tu as déjà eu peur d'un bruit chez toi avant de découvrir que c'était un objet banal.","Bois si tu as déjà acheté un carnet pour devenir organisé sans jamais écrire dedans.","Bois si tu as déjà fait semblant de chercher quelque chose pour rester dans une pièce.","Bois si tu as déjà inventé une chorégraphie en faisant le ménage.","Bois si tu as déjà jugé un livre à sa couverture puis changé d'avis.","Bois si tu as déjà fait une capture d'écran pour t'en souvenir puis ne l'as jamais retrouvée.","Bois si tu as déjà été beaucoup trop fier d'avoir trouvé une place de parking.","Bois si tu as déjà eu une conversation entière avec ton GPS.","Bois si tu as déjà imaginé le discours que tu prononcerais en recevant un prix.","Bois si tu as déjà fait semblant de ne pas voir quelqu'un dans un magasin.","Bois si tu as déjà gardé le meilleur morceau pour la fin et quelqu'un l'a pris.","Bois si tu as déjà eu une passion pour un hobby qui a duré moins d'une semaine."],"spicy":["Bois si tu as déjà relu un ancien échange juste pour retrouver la sensation du début.","Bois si tu as déjà envoyé un message puis posé ton téléphone loin de toi par nervosité.","Bois si tu as déjà changé trois fois de tenue avant un rendez-vous important.","Bois si tu as déjà espéré qu'une personne fasse le premier pas en lui envoyant des signaux subtils.","Bois si tu as déjà eu un faible pour une voix avant de connaître la personne.","Bois si tu as déjà prolongé un au revoir parce que tu ne voulais pas que le moment se termine.","Bois si tu as déjà préparé une rencontre dans ta tête comme une scène de série.","Bois si tu as déjà fait exprès de frôler la main de quelqu'un.","Bois si tu as déjà été troublé par un regard qui a duré un peu trop longtemps.","Bois si tu as déjà attendu une réponse en gardant ton téléphone à portée de main.","Bois si tu as déjà eu envie de voler un baiser à un moment inattendu.","Bois si tu as déjà fait durer une conversation juste pour entendre la voix de quelqu'un.","Bois si tu as déjà été séduit par le parfum de quelqu'un.","Bois si tu as déjà imaginé un rendez-vous secret dans une ville où personne ne vous connaît.","Bois si tu as déjà souri en voyant le nom d'une personne s'afficher.","Bois si tu as déjà fait le premier pas avec une phrase d'accroche franchement mauvaise.","Bois si tu as déjà eu envie de revivre un moment précis.","Bois si tu as déjà été attiré par quelqu'un que tu trouvais insupportable au départ.","Bois si tu as déjà gardé un vêtement parce qu'il te rappelait une personne.","Bois si tu as déjà fait semblant d'être calme alors que ton cœur battait vite.","Bois si tu as déjà eu envie de disparaître avec quelqu'un le temps d'un week-end improvisé.","Bois si tu as déjà imaginé une escapade à deux sans dire à personne où vous alliez.","Bois si tu as déjà été séduit par une personne qui savait très bien faire rire.","Bois si tu as déjà eu un rendez-vous où le temps est passé beaucoup trop vite.","Bois si tu as déjà envoyé une photo en espérant secrètement recevoir un compliment.","Bois si tu as déjà eu envie de prendre quelqu'un par la main sans oser.","Bois si tu as déjà été déstabilisé par un compliment murmuré à l'oreille.","Bois si tu as déjà inventé un prétexte pour passer quelques minutes de plus avec quelqu'un.","Bois si tu as déjà eu une attirance née d'une complicité inattendue.","Bois si tu as déjà rêvé d'un baiser sous la pluie ou dans un lieu de cinéma.","Bois si tu as déjà voulu organiser une surprise romantique hors du commun.","Bois si tu as déjà été tenté d'envoyer « tu me manques » puis changé d'avis.","Bois si tu as déjà vécu un moment de tension romantique sans qu'un mot soit prononcé.","Bois si tu as déjà voulu avouer une envie sans trouver le bon moment.","Bois si tu as déjà eu envie de faire durer un câlin bien plus longtemps que prévu."]};let level='mix',used=new Set(),count=0;function pool(){return level==='mix'?[...cards.soft,...cards.spicy]:cards[level]}function choose(v){level=v;used=new Set();count=0;document.querySelectorAll('.chip').forEach(b=>b.classList.toggle('active',b.dataset.level===v));document.getElementById('tag').textContent='NOUVELLE SÉRIE';document.getElementById('question').textContent='Niveau changé ! Pioche une carte.';update()}function draw(){const p=pool();let a=p.filter(q=>!used.has(q));if(!a.length){used=new Set();a=p}const q=a[Math.floor(Math.random()*a.length)];used.add(q);count++;document.getElementById('question').textContent=q;document.getElementById('tag').textContent=cards.spicy.includes(q)?'🌶️ PIQUANT':'😇 SOFT';update()}function update(){document.getElementById('count').textContent=count+' question'+(count>1?'s':'')+' jouée'+(count>1?'s':'')+' · '+(pool().length-used.size)+' carte(s) restante(s)'}function reset(){used=new Set();count=0;document.getElementById('tag').textContent='PRÊTS À JOUER ?';document.getElementById('question').textContent='Série remise à zéro. À vous de jouer !';update()}</script></body></html>
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#201426"><title>Bois si tu peux 🥂</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100svh;padding:18px;display:grid;place-items:center;background:radial-gradient(circle at 12% 8%,#75405e,transparent 35%),radial-gradient(circle at 88% 90%,#45336f,transparent 38%),#17101d;color:#fff;font-family:system-ui,-apple-system,sans-serif}.app{width:min(680px,100%);padding:clamp(20px,5vw,36px);background:#ffffff12;border:1px solid #ffffff2b;border-radius:28px;box-shadow:0 24px 80px #0007;text-align:center}h1{font-size:clamp(32px,7vw,46px);margin:8px 0;letter-spacing:-1.5px}.sub{color:#e8d8e8b8;line-height:1.55;margin:0 auto;max-width:490px}.pill{display:inline-block;margin:18px 0 12px;padding:8px 13px;border:1px solid #f4bfd7a0;border-radius:99px;color:#ffd5e6;font-size:12px;font-weight:900;letter-spacing:1.3px}.card{min-height:260px;padding:26px 22px;border:1px solid #ffffff26;border-radius:23px;background:linear-gradient(145deg,#ffffff20,#00000020);display:flex;flex-direction:column;justify-content:center;align-items:center}.kind{font-size:11px;letter-spacing:2px;color:#f6bfd7;font-weight:900;margin-bottom:18px}.prompt{font-size:clamp(22px,5.2vw,30px);font-weight:800;line-height:1.4}.main{width:100%;border:0;border-radius:16px;padding:18px;margin-top:16px;background:#f4bfd7;color:#32172d;font-size:17px;font-weight:900;cursor:pointer}.alt{width:100%;border:1px solid #ffffff35;border-radius:15px;padding:13px;margin-top:9px;background:#ffffff12;color:white;font-weight:750;font-size:14px;cursor:pointer}.meta{margin-top:15px;font-size:13px;color:#e8d8e89c}.note{font-size:11px;line-height:1.55;color:#e8d8e88c;margin:16px 4px 0}.main:active,.alt:active{transform:scale(.99)}
+</style></head>
+<body><main class="app">
+<div style="font-size:42px">🥂</div><h1>Bois si tu peux</h1>
+<p class="sub">Des cartes vraiment mélangées : souvenirs, choix impossibles, situations absurdes, petites révélations et défis à deux. Pas une suite de variantes de la même question.</p>
+<div class="pill">🎲 CATÉGORIE UNIQUE · MÉLANGE TOTAL</div>
+<section class="card" aria-live="polite"><div class="kind" id="kind">À VOUS DE JOUER</div><div class="prompt" id="prompt">Piochez une carte. Vous ne savez jamais sur quoi vous allez tomber.</div></section>
+<button class="main" id="next" onclick="draw()">PIOCHER UNE CARTE ✨</button>
+<button class="alt" onclick="restart()">Recommencer une nouvelle partie</button>
+<div class="meta" id="meta">0 / 100 cartes découvertes</div>
+<p class="note">Le principe est de répondre honnêtement ou de relever le défi. Une petite gorgée suffit ; vous pouvez aussi jouer sans alcool ou passer une carte sans vous justifier. Ne vous forcez jamais à boire et ne conduisez pas après avoir consommé de l’alcool. 💗</p>
+</main>
+<script>
+const deck = [
+["SOUVENIR","Raconte un souvenir d’enfance que personne ici ne connaît."],
+["CHOIX IMPOSSIBLE","Tu dois choisir : ne plus jamais voyager ou ne plus jamais commander à manger. Tu prends quoi ?"],
+["INSTINCT","Sans réfléchir : quelle est la première ville où tu partirais demain ?"],
+["DÉFI","Fais une imitation de l’autre pendant 10 secondes. L’autre doit deviner ce que tu imites."],
+["CONFESSION","Quel petit mensonge racontes-tu parfois pour avoir la paix ?"],
+["IMAGINATION","Si notre couple était une émission télé, quel serait son titre ?"],
+["GOÛTS","Quel aliment tout le monde adore mais que tu pourrais ne plus jamais revoir ?"],
+["OBSERVATION","Quel est le détail le plus improbable que tu as remarqué chez l’autre ?"],
+["HYPOTHÈSE","On reçoit 10 000 € à dépenser en 24 heures, sans économiser. Quel est ton premier achat ?"],
+["MÉMOIRE","Quel était ton surnom quand tu étais petit, ou celui que tu aurais détesté avoir ?"],
+["DÉFI","Laisse l’autre choisir un mot : tu dois le placer naturellement dans ta prochaine phrase."],
+["AVEU","Quelle application de ton téléphone connaît beaucoup trop de choses sur toi ?"],
+["CLASSEMENT","Cite trois choses qui peuvent instantanément te mettre de bonne humeur."],
+["SCÉNARIO","Tu peux dîner avec une personne de n’importe quelle époque. Qui invites-tu ?"],
+["COUPLE","Quel moment banal passé ensemble aimerais-tu revivre exactement pareil ?"],
+["QUESTION FLASH","Plage au lever du soleil ou ville illuminée à minuit ? Défends ton choix."],
+["PETITE HONTE","Quelle chanson connais-tu par cœur alors que tu assumes à moitié ?"],
+["DÉFI","Pendant le prochain tour, réponds à toutes les questions avec un accent inventé."],
+["CURIOSITÉ","Quel métier voulais-tu faire quand tu avais 8 ans ?"],
+["PRÉFÉRENCE","Tu préfères recevoir une surprise ou organiser toi-même chaque détail ?"],
+["MYSTÈRE","Quelle chose les gens comprennent souvent de travers à ton sujet ?"],
+["MARCHÉ","Tu échanges ton téléphone actuel contre un téléphone indestructible mais sans appareil photo : oui ou non ?"],
+["RÉFLEXE","Quel est le premier geste que tu fais en rentrant chez toi ?"],
+["DÉFI","Dessine l’autre en 20 secondes. Interdiction de recommencer."],
+["VOYAGE","Quel endroit t’attire sans que tu saches vraiment expliquer pourquoi ?"],
+["VÉRITÉ","Quelle qualité admires-tu chez l’autre mais que tu ne lui dis pas assez ?"],
+["ABSURDE","Si les animaux pouvaient parler, lequel serait le plus insupportable ?"],
+["ARGENT","Quel achat à moins de 30 € a vraiment amélioré ton quotidien ?"],
+["MUSIQUE","Quelle chanson devrait jouer à ton entrée dans une pièce ?"],
+["DÉFI","L’autre choisit un objet dans la pièce : invente-lui une publicité de 15 secondes."],
+["TEMPÉRAMENT","Quand tu es contrarié, tu préfères parler tout de suite ou prendre du recul ?"],
+["SOUHAIT","Quelle compétence aimerais-tu maîtriser instantanément ?"],
+["DUEL","Qui de vous deux survivrait le mieux une semaine sans internet ? Explique."],
+["NOSTALGIE","Quel jeu, dessin animé ou programme te manque de ton enfance ?"],
+["IMPRO","Invente une règle complètement inutile qui devrait devenir obligatoire à la maison."],
+["PETIT PLAISIR","Quel est ton plaisir coupable quand tu es seul ?"],
+["DÉCISION","Tu peux connaître une seule réponse sur ton avenir. Quelle question poses-tu ?"],
+["COUPLE","Quelle activité toute simple devrait-on faire plus souvent ensemble ?"],
+["DÉFI","Fais deviner un film à l’autre uniquement avec des gestes."],
+["FRANC-PARLER","Quelle habitude aimerais-tu améliorer chez toi, sans te juger ?"],
+["SURVIE","Tu es coincé dans un aéroport pendant 12 heures : quel est ton plan ?"],
+["PRÉFÉRENCE","Un voyage parfaitement organisé ou une aventure sans programme ?"],
+["ANECDOTE","Quelle rencontre inattendue t’a marqué, même brièvement ?"],
+["JUGEMENT","Quel phénomène de mode ne comprends-tu absolument pas ?"],
+["DÉFI","L’autre te donne trois mots au hasard : invente une histoire qui les contient."],
+["PROJECTION","À quoi aimerais-tu que ressemble une journée idéale dans cinq ans ?"],
+["SECRET LÉGER","Quelle chose fais-tu quand personne ne te regarde et que tu n’avoues presque jamais ?"],
+["RAPIDITÉ","Choisis en trois secondes : luxe, liberté ou tranquillité ?"],
+["COUPLE","Quel serait notre duo parfait dans un jeu télévisé ?"],
+["CULTURE","Quel film ou quelle série pourrais-tu revoir une quatrième fois ?"],
+["SCÉNARIO","Tu deviens maire demain. Quelle est la première règle que tu changes ?"],
+["DÉFI","Fais un compliment à l’autre sans utiliser les mots beau, belle, gentil ou gentille."],
+["GOÛTS","Quel parfum ou quelle odeur te ramène immédiatement à un souvenir ?"],
+["FRUSTRATION","Quelle petite chose te fait perdre patience de façon disproportionnée ?"],
+["IMAGINATION","Si tu pouvais ouvrir un commerce insolite, qu’est-ce que tu vendrais ?"],
+["DUO","Qui serait le meilleur négociateur entre vous deux ? Donnez un exemple."],
+["QUESTION","Quel sujet pourrais-tu écouter pendant des heures sans te lasser ?"],
+["DÉFI","Raconte votre rencontre comme si tu commentais une finale sportive."],
+["DÉCALÉ","Quelle invention inutile aimerais-tu quand même posséder ?"],
+["COURAGE","Quelle expérience aimerais-tu tenter mais repousses-tu depuis longtemps ?"],
+["SOUVENIR","Quel cadeau reçu t’a le plus surpris, même s’il ne coûtait presque rien ?"],
+["CHOIX","Tu préfères toujours avoir 20 minutes d’avance ou toujours trouver une place immédiatement ?"],
+["COUPLE","Quelle petite attention te touche davantage qu’un grand cadeau ?"],
+["DÉFI","Pendant 15 secondes, défends avec sérieux une opinion complètement ridicule."],
+["PERSONNALITÉ","Dans un groupe, es-tu plutôt celui qui lance les idées, observe ou met l’ambiance ?"],
+["FUTUR","Quel projet te ferait te dire : « cette année, je l’ai vraiment réussie » ?"],
+["INATTENDU","Quelle chose as-tu apprise récemment par hasard ?"],
+["NÉGOCIATION","L’autre choisit votre prochain dessert, mais tu choisis le prochain film : marché conclu ?"],
+["RÉVÉLATION","Quel compliment t’a marqué plus longtemps que tu ne l’aurais pensé ?"],
+["DÉFI","Donne à l’autre un surnom inédit et explique son origine en une phrase."],
+["ÉVASION","Si on devait partir dans une heure avec un seul sac, qu’est-ce que tu emportes absolument ?"],
+["VALEURS","Quelle promesse est, selon toi, plus importante que les grandes déclarations ?"],
+["HUMOUR","Quelle est la pire excuse que tu aies déjà entendue ?"],
+["COUPLE","Quel endroit aimerais-tu découvrir avec l’autre, juste tous les deux ?"],
+["DÉFI","Fais une déclaration dramatique à un objet choisi par l’autre."],
+["BILAN","Quelle décision passée te rend encore fier aujourd’hui ?"],
+["PETIT DÉBAT","Faut-il arriver en avance ou pile à l’heure ? Convaincs l’autre."],
+["IMAGINATION","Si notre histoire avait une bande-annonce, quelle phrase serait prononcée à la fin ?"],
+["CONFIANCE","Sur quel sujet aimerais-tu que l’autre te pose plus souvent des questions ?"],
+["DÉFI","L’autre ferme les yeux et tu changes un détail dans la pièce. À lui de le retrouver."],
+["VIE QUOTIDIENNE","Quelle tâche ménagère supprimerais-tu de la planète ?"],
+["MÉMOIRE","Quel est le voyage ou la sortie qui t’a laissé le meilleur souvenir ?"],
+["CHOIX IMPOSSIBLE","Ne plus jamais écouter de musique ou ne plus jamais regarder de films : tu choisis quoi ?"],
+["COUPLE","Quelle tradition à nous deux pourrait devenir un rituel ?"],
+["DÉFI","Invente un slogan publicitaire pour votre duo."],
+["CURIOSITÉ","Quelle question aimerais-tu poser à ton toi de 80 ans ?"],
+["GOÛTS","Quel plat pourrais-tu manger trois jours de suite sans te plaindre ?"],
+["SCÉNARIO","Tu gagnes un billet aller simple pour n’importe où, mais tu pars seul. Où vas-tu ?"],
+["FRANCHEMENT","Quelle chose te paraît romantique alors que d’autres la trouvent banale ?"],
+["DÉFI","Fais rire l’autre en moins de 20 secondes, sans le toucher."],
+["OBSERVATION","Quelle expression l’autre répète-t-il tout le temps ?"],
+["RÊVE","Si tu pouvais maîtriser une langue dès demain, laquelle choisirais-tu ?"],
+["DÉBAT","Est-ce qu’un week-end réussi se prépare ou s’improvise ?"],
+["COUPLE","Quel moment t’a fait penser : « on forme une bonne équipe » ?"],
+["DÉFI","L’autre choisit un genre musical : fredonne une chanson qui correspond."],
+["BILAN","Quelle peur as-tu réussi à dépasser, même un tout petit peu ?"],
+["ABSURDE","Si tu devais remplacer ton prénom par celui d’un personnage fictif, lequel choisirais-tu ?"],
+["DERNIÈRE CARTE","Chacun dit une chose qu’il aimerait absolument vivre avec l’autre cette année."]
+];
+let order=[],index=0;
+function shuffle(){order=[...deck.keys()];for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]]}index=0}
+function draw(){if(index>=order.length){document.getElementById('kind').textContent='FIN DE LA PARTIE 🎉';document.getElementById('prompt').textContent='Vous avez découvert les 100 cartes. Aucune n’a été répétée pendant cette partie !';document.getElementById('next').textContent='LANCER UNE NOUVELLE PARTIE';document.getElementById('next').onclick=restart;document.getElementById('meta').textContent='100 / 100 cartes découvertes';return}const c=deck[order[index++]];document.getElementById('kind').textContent=c[0];document.getElementById('prompt').textContent=c[1];document.getElementById('meta').textContent=index+' / '+deck.length+' cartes découvertes';if(index===deck.length){document.getElementById('next').textContent='VOIR LA FIN DE PARTIE';}}
+function restart(){shuffle();document.getElementById('kind').textContent='NOUVELLE PARTIE';document.getElementById('prompt').textContent='Les 100 cartes ont été remélangées. Cette fois encore, aucune répétition avant la fin.';document.getElementById('next').textContent='PIOCHER UNE CARTE ✨';document.getElementById('next').onclick=draw;document.getElementById('meta').textContent='0 / '+deck.length+' cartes découvertes'}
+shuffle();
+</script></body></html>
