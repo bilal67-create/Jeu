@@ -119,5 +119,5 @@ async function join(){
 }
 $("create").onclick=create;$("solo").onclick=startSolo;$("join").onclick=join;$("roll").onclick=()=>doAction("roll");$("next").onclick=()=>doAction("next");$("restart").onclick=()=>{if(role==="host"||role==="solo"){doAction("restart")}else if(conn&&conn.open)conn.send({kind:"action",action:"restart"})};
 $("copy").onclick=async()=>{try{await navigator.clipboard.writeText(room||"");$("turn").textContent="Identifiant copié : "+room}catch{$("turn").textContent="Identifiant : "+room}};
-try{const data=JSON.parse($("question-data").textContent);bank=Object.entries(data).flatMap(([cat,items])=>items.map(q=>({cat,q})));if(bank.length<30)throw new Error("Banque de questions incomplète");ready=true;setStatus(bank.length+" questions prêtes. À vous de jouer !")}catch(e){setStatus("Erreur de préparation du jeu : "+e.message)}
+try{const data=JSON.parse($("question-data").textContent);bank=Object.entries(data).flatMap(([cat,items])=>items.map(q=>({cat,q})));if(bank.length<30)throw new Error("Banque de questions incomplète");ready=true;setStatus(bank.length+" questions prêtes. À vous de jouer !");if(new URLSearchParams(window.location.search).get("test")==="solo")startSolo()}catch(e){setStatus("Erreur de préparation du jeu : "+e.message)}
 </script></body></html>
