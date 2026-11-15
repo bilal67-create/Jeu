@@ -37,7 +37,10 @@
 </section></main>
 <script>
 const $=id=>document.getElementById(id),TOTAL=30,KEY="a2d-used-v1";
-let bank=[],peer=null,conn=null,role=null,room=null,state=null,ready=false,joinTimer=null;\nconst PEER_OPTIONS={host:"0.peerjs.com",port:443,path:"/",secure:true,debug:1};\nfunction makePeer(){return new Peer(undefined,PEER_OPTIONS)}\nfunction peerError(e){const code=e&&e.type?e.type:"erreur inconnue";setStatus("Connexion impossible ("+code+"). Vérifie que l’autre joueur a encore sa partie ouverte et réessaie avec son identifiant complet.")}
+let bank=[],peer=null,conn=null,role=null,room=null,state=null,ready=false,joinTimer=null;
+const PEER_OPTIONS={host:"0.peerjs.com",port:443,path:"/",secure:true,debug:1};
+function makePeer(){return new Peer(undefined,PEER_OPTIONS)}
+function peerError(e){const code=e&&e.type?e.type:"erreur inconnue";setStatus("Connexion impossible ("+code+"). Vérifie que l’autre joueur a encore sa partie ouverte et réessaie avec son identifiant complet.")}
 const symbols=["✦","♡","☼","❀","✧","☾","◇","✿","☆","♧"];
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 function used(){try{return new Set(JSON.parse(localStorage.getItem(KEY)||"[]"))}catch{return new Set()}}
