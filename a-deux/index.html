@@ -96,7 +96,7 @@ async function create(){
  try{
   if(!window.Peer)throw new Error("peer library missing");
   role="host";state=fresh();state.players[0]=$("name").value.trim()||"Joueur 1";
-  peer=new Peer();peer.on("open",id=>{room=id;showGame();$("turn").textContent="Partie créée · partage cet identifiant : "+id;setStatus("En attente du deuxième joueur…")});
+  peer=makePeer();peer.on("open",id=>{room=id;showGame();$("turn").textContent="Partie créée · partage cet identifiant : "+id;setStatus("En attente du deuxième joueur…")});
   peer.on("connection",attachHostConnection);peer.on("error",e=>setStatus("Connexion impossible : "+e.type));
  }catch(e){setStatus("Impossible de créer la partie. Vérifie ta connexion puis réessaie.")}
 }
