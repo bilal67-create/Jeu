@@ -1,37 +1,115 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>À deux, même à distance</title>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#17221d">
+<title>À deux — Le jeu</title>
 <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <style>
-:root{color-scheme:dark;--bg:#111522;--panel:#1b2235;--gold:#e4c27a;--muted:#aab2c5}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#29304a,#111522 65%);color:#f5f2eb;font-family:system-ui,sans-serif;padding:22px 14px 40px}.wrap{max-width:850px;margin:auto}h1,h2{font-family:Georgia,serif;font-weight:500}h1{text-align:center;color:var(--gold);font-size:clamp(30px,7vw,48px)}.sub{text-align:center;color:var(--muted)}.panel{background:#1b2235;border:1px solid #343d56;border-radius:18px;padding:18px;margin:16px 0}.row{display:flex;gap:10px;flex-wrap:wrap}input,button{font:inherit;border-radius:12px;padding:12px;border:1px solid #48516a;background:#252e45;color:white}input{min-width:0;flex:1}button{cursor:pointer;background:var(--gold);color:#201b12;border:0;font-weight:700}button.secondary{background:#303951;color:#f5f2eb}button:disabled{opacity:.4;cursor:not-allowed}.small{font-size:13px;color:var(--muted);line-height:1.55}.hidden{display:none!important}#board{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:16px 0}.cell{background:#252e45;border:1px solid #414b65;border-radius:12px;min-height:70px;padding:7px 3px;text-align:center;display:flex;flex-direction:column;justify-content:center;font-size:11px}.cell .num{color:var(--gold);font-weight:800}.cell .emoji{font-size:20px}.cell.active{border:2px solid var(--gold);background:#44402f}.pawn{background:#252e45;border-radius:9px;padding:9px;margin:5px 0}.question{text-align:center;font:clamp(21px,4vw,30px) Georgia,serif;line-height:1.35;margin:18px 0}.category{text-align:center;color:var(--gold);font-size:12px;letter-spacing:.12em;text-transform:uppercase}#status{color:var(--gold);min-height:24px}
-</style></head><body><main class="wrap"><h1>À deux, même à distance</h1><p class="sub">30 cases · 175 questions · un moment rien qu’à vous</p>
-<section class="panel" id="setup"><h2>On se retrouve ?</h2><div class="row"><input id="name" placeholder="Ton prénom" maxlength="24"><button id="create">Créer une partie</button></div><p class="small">Ou rejoins l’autre joueur avec son identifiant :</p><div class="row"><input id="room" placeholder="Identifiant de la partie"><button class="secondary" id="join">Rejoindre</button></div><p id="status"></p></section>
-<section id="game" class="hidden"><div class="panel"><div id="players"></div><p id="turn"></p><div class="row"><button id="roll">🎲 Lancer le dé</button><button class="secondary" id="copy">Copier l’identifiant</button><button class="secondary" id="restart">Nouvelle partie</button></div><p id="rollResult" class="small"></p><div id="board"></div></div>
-<div class="panel hidden" id="questionBox"><div class="category" id="category"></div><div class="question" id="question"></div><div class="row"><button class="secondary" id="reveal">Révéler le thème</button><button id="next">Question terminée</button></div></div>
-<p class="small">🔒 Anti-répétition : les questions déjà posées sont mémorisées sur l’appareil de la personne qui crée la partie. Elles ne reviennent pas lors des nouvelles parties tant que les 175 questions n’ont pas toutes été utilisées. Quand le stock est épuisé, un nouveau cycle commence.</p><p class="small">Règle d’or : vous pouvez passer une question sans justification. Le but est de vous rapprocher, jamais de mettre l’autre mal à l’aise.</p></section></main>
+:root{--bg:#17221d;--felt:#244333;--felt2:#1c382b;--gold:#e8c77e;--cream:#f8f0dc;--ink:#26352c;--muted:#c8d1c7;--red:#b85d4c}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;padding:24px 14px 44px;background:radial-gradient(ellipse at 50% 0%,#354d3c 0,#17221d 62%);color:var(--cream);font-family:Georgia,'Times New Roman',serif}
+.wrap{width:min(980px,100%);margin:auto}.top{text-align:center;margin:4px 0 22px}.eyebrow{font:700 11px system-ui;letter-spacing:.28em;text-transform:uppercase;color:var(--gold)}h1{font-size:clamp(35px,7vw,58px);font-weight:500;letter-spacing:.015em;margin:7px 0 4px}.subtitle{font:14px system-ui;color:#d1d9ce;margin:0}
+.panel{background:linear-gradient(145deg,#f9f2df,#e8ddc3);color:var(--ink);border:1px solid #e4cc91;border-radius:22px;padding:22px;box-shadow:0 18px 45px #07120d80;margin:18px 0}
+.panel h2{font-size:27px;font-weight:500;margin:0 0 15px}.row{display:flex;gap:10px;flex-wrap:wrap}input{min-width:0;flex:1;border:1px solid #c4b895;border-radius:12px;padding:13px 14px;background:#fffdf7;color:var(--ink);font:15px system-ui}button{border:0;border-radius:12px;padding:13px 17px;background:#274c37;color:#fff8e7;font:700 14px system-ui;cursor:pointer;box-shadow:0 3px 0 #183324}button.alt{background:#d7c69e;color:#29382e;box-shadow:0 3px 0 #b9a77d}button:disabled{opacity:.4;cursor:not-allowed}.help{font:13px/1.5 system-ui;color:#657367}.status{font:13px system-ui;color:#42634c;min-height:20px;margin:12px 0 0}
+#game{display:none}.gamebar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:12px 0}.players{display:flex;gap:9px;flex-wrap:wrap}.player{background:#f8f0dc;color:#24372c;border:1px solid #ddc98e;border-radius:30px;padding:9px 14px;font:700 13px system-ui}.player.active{background:var(--gold);box-shadow:0 0 0 2px #fff1c2}
+.board-shell{background:linear-gradient(135deg,#d4bd83,#9f8550);padding:10px;border-radius:24px;box-shadow:0 18px 42px #08140f99;border:1px solid #f2dfa9}
+.board{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));grid-template-rows:repeat(8,minmax(52px,1fr));gap:6px;background:#244333;padding:8px;border-radius:17px;aspect-ratio:9/8}
+.tile{position:relative;border-radius:10px;background:linear-gradient(145deg,#fff9e8,#e6d8b7);color:#344538;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;border:1px solid #d5c49b;box-shadow:inset 0 -3px 0 #c9b78f;font:700 11px system-ui}
+.tile .num{font-size:clamp(9px,1.6vw,13px);opacity:.65}.tile .symbol{font-size:clamp(15px,2.8vw,24px);line-height:1.2}.tile.start{background:#dce6c9}.tile.finish{background:#e9c77b}.tile.current{outline:3px solid #fff1b7;outline-offset:1px;transform:translateY(-2px);z-index:2}.tokens{display:flex;gap:1px;font-size:clamp(11px,2vw,17px);line-height:1}
+.center{grid-column:2/9;grid-row:2/8;border-radius:15px;background:radial-gradient(circle at 50% 30%,#315a42,#193728);border:1px solid #55765b;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:12px;color:#f8f0dc;min-width:0}
+.center .mark{font-size:clamp(28px,5vw,48px);color:var(--gold)}.center h2{font-size:clamp(16px,3vw,25px);font-weight:500;margin:5px 0}.center p{font:clamp(9px,1.5vw,12px)/1.5 system-ui;color:#d4dfd0;margin:3px 0;max-width:260px}
+.controls{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin:16px 0 5px}.dice{font-size:20px}.turnline{text-align:center;color:#f2d999;font:14px system-ui;margin:10px 0 14px}.rolltext{text-align:center;color:#d6dfd5;font:13px system-ui;min-height:18px}
+.question-card{display:none;background:#f8f0dc;color:#29392e;border:1px solid #e4cc91;border-radius:22px;padding:24px 22px;margin:18px 0;text-align:center;box-shadow:0 15px 40px #08140f80}.question-card .tag{font:700 10px system-ui;letter-spacing:.22em;text-transform:uppercase;color:#8c7541}.question-card .q{font-size:clamp(22px,4vw,32px);line-height:1.3;margin:15px auto 22px;max-width:700px}.rules{text-align:center;color:#c8d1c7;font:12px/1.5 system-ui;margin:16px auto;max-width:700px}
+@media(max-width:560px){body{padding:17px 8px 30px}.board-shell{padding:6px;border-radius:17px}.board{gap:3px;padding:5px;grid-template-rows:repeat(8,minmax(37px,1fr))}.tile{border-radius:6px}.center{border-radius:9px;padding:5px}.panel{padding:17px}.controls button{flex:1}.player{font-size:11px;padding:8px 10px}}
+</style>
+</head>
+<body><main class="wrap">
+<header class="top"><div class="eyebrow">Un jeu pour se retrouver</div><h1>À deux</h1><p class="subtitle">Lance le dé, avance, et découvre la question.</p></header>
+<section class="panel" id="setup"><h2>Créer votre partie</h2><div class="row"><input id="name" placeholder="Ton prénom" maxlength="24"><button id="create">Créer une partie</button></div><p class="help">Pour jouer à distance, une personne crée la partie puis partage son identifiant.</p><div class="row"><input id="room" placeholder="Identifiant de la partie"><button class="alt" id="join">Rejoindre</button></div><p class="status" id="status">Chargement des questions…</p></section>
+<section id="game">
+<div class="gamebar"><div class="players" id="players"></div><button class="alt" id="copy">Copier l’identifiant</button></div>
+<div class="turnline" id="turn">En attente du deuxième joueur…</div>
+<div class="board-shell"><div class="board" id="board"><div class="center"><div class="mark">✦</div><h2>Votre aventure à deux</h2><p>Avancez ensemble, prenez le temps de vous découvrir et profitez du moment.</p></div></div></div>
+<div class="controls"><button id="roll"><span class="dice">🎲</span> Lancer le dé</button><button class="alt" id="restart">Recommencer</button></div><div class="rolltext" id="rollResult"></div>
+<div class="question-card" id="questionBox"><div class="tag">Votre question</div><div class="q" id="question"></div><button id="next">On continue</button></div>
+<p class="rules">30 cases · 175 questions · aucune catégorie affichée. Les questions déjà posées sont mémorisées sur l’appareil de la personne qui crée la partie.</p>
+</section></main>
 <script>
-const $=id=>document.getElementById(id),N=30,KEY="a2d-used-v1";
-let BANK={},TYPES=[],EMOJI={},peer,conn,role,room,state;
-const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
-const used=()=>{try{return new Set(JSON.parse(localStorage.getItem(KEY)||"[]"))}catch{return new Set()}};
-function deck(){let seen=used(),d=[];for(let c of TYPES)for(let q of BANK[c])if(!seen.has(q))d.push({cat:c,q});if(!d.length){localStorage.removeItem(KEY);for(let c of TYPES)for(let q of BANK[c])d.push({cat:c,q});$("status").textContent="Les 175 questions ont été utilisées : nouveau cycle !"}return shuffle(d)}
-function remember(q){let s=used();s.add(q);try{localStorage.setItem(KEY,JSON.stringify([...s]))}catch{}}
-function path(){let a=[];for(let c of TYPES)for(let i=0;i<4;i++)a.push(c);a.push(TYPES[0],TYPES[3]);return shuffle(a)}
-function fresh(){return {players:[],positions:[0,0],turn:0,current:null,finished:false,path:path(),deck:deck()}}
-function send(){if(role==="host"){if(conn?.open)conn.send({type:"state",state});render()}}
-function act(a){if(role==="host"){apply(a);send()}else if(conn?.open)conn.send({type:"action",action:a})}
-function apply(a){if(a==="roll"&&!state.current&&!state.finished){let n=Math.ceil(Math.random()*6),p=state.turn;state.lastRoll=n;state.positions[p]=Math.min(29,state.positions[p]+n);let cat=state.path[state.positions[p]],i=state.deck.findIndex(x=>x.cat===cat);if(i<0)i=state.deck.findIndex(x=>true);let card=state.deck.splice(i,1)[0];remember(card.q);state.current={...card,revealed:card.cat!=="🕵️ Thème secret"};if(state.positions[p]>=29)state.finished=true}
-if(a==="reveal"&&state.current)state.current.revealed=true;
-if(a==="next"&&state.current){state.current=null;if(state.finished){state.finished=false;state.positions=[0,0];state.deck=deck();state.path=path()}else state.turn=1-state.turn}}
-function status(t){$("status").textContent=t}
-function start(){ $("setup").classList.add("hidden");$("game").classList.remove("hidden");render();send()}
-function initPeer(){return new Promise((ok,no)=>{peer=new Peer();peer.on("open",ok);peer.on("error",no);peer.on("connection",c=>{if(role!=="host")return;c.on("open",()=>{conn=c;c.send({type:"state",state});status("Votre partenaire est connecté !")});c.on("data",d=>{if(d.type==="hello"){state.players[1]=d.name||"Joueur 2";send()}if(d.type==="action"){apply(d.action);send()}})})})}
-async function create(){try{role="host";state=fresh();state.players=[$("name").value.trim()||"Joueur 1","En attente…"];await initPeer();room=peer.id;$("copy").textContent="Copier l’identifiant : "+room;status("Partie créée. En attente de l’autre joueur…");start()}catch(e){status("Connexion impossible. Réessaie.")}}
-async function join(){try{role="guest";room=$("room").value.trim();if(!room)return status("Entre l’identifiant reçu.");await initPeer();conn=peer.connect(room,{reliable:true});conn.on("open",()=>{conn.send({type:"hello",name:$("name").value.trim()||"Joueur 2"});status("Connecté !");start()});conn.on("data",d=>{if(d.type==="state"){state=d.state;render()}})}catch(e){status("Impossible de rejoindre. Vérifie l’identifiant.")}}
-function render(){if(!state)return;$("players").innerHTML=state.players.map((p,i)=>'<div class="pawn">'+(i?"✨":"🌙")+' '+p+' · case '+(state.positions[i]+1)+'</div>').join("");$("turn").textContent="Tour de "+(state.players[state.turn]||"Joueur");$("rollResult").textContent=state.lastRoll?"Dernier lancer : 🎲 "+state.lastRoll:"";$("board").innerHTML="";for(let i=0;i<N;i++){let c=state.path[i],d=document.createElement("div");d.className="cell"+(state.positions.includes(i)?" active":"");d.innerHTML='<span class="num">'+(i+1)+'</span><span class="emoji">'+(state.positions.includes(i)?(state.positions.indexOf(i)?"✨":"🌙"):(c==="🕵️ Thème secret"?"❔":(EMOJI[c]||"🎲")) )+'</span><span>'+(c==="🕵️ Thème secret"?"Mystère":c.replace(/^.+ /,""))+'</span>'; $("board").appendChild(d)}
-$("questionBox").classList.toggle("hidden",!state.current);if(state.current){$("category").textContent=state.current.revealed?state.current.cat:"THÈME SECRET · À DÉCOUVRIR";$("question").textContent=state.current.q;$("reveal").classList.toggle("hidden",state.current.revealed)}
-$("roll").disabled=state.turn!==(role==="host"?0:1)||!!state.current||!conn?.open;$("next").disabled=state.turn!==(role==="host"?0:1);$("reveal").disabled=state.turn!==(role==="host"?0:1)}
-$("create").onclick=create;$("join").onclick=join;$("roll").onclick=()=>act("roll");$("reveal").onclick=()=>act("reveal");$("next").onclick=()=>act("next");
-$("copy").onclick=()=>navigator.clipboard?.writeText(room||"").then(()=>status("Identifiant copié !"));
-$("restart").onclick=()=>{if(role!=="host")return;state=fresh();state.players=[$("name").value.trim()||"Joueur 1",state.players[1]||"Joueur 2"];send()};
-(async()=>{try{let r=await fetch("questions.json");BANK=await r.json();TYPES=Object.keys(BANK);EMOJI={"❤️ Intime":"❤️","😂 Délire":"😂","😳 Gênant":"😳","🧠 Débat":"🧠","🔥 Piquant":"🔥","🤯 Inattendu":"🤯","🕵️ Thème secret":"🕵️"};status("Prêt à jouer !")}catch(e){status("Impossible de charger les questions.")}})();
+const $=id=>document.getElementById(id),TOTAL=30,KEY="a2d-used-v1";
+let bank=[],peer=null,conn=null,role=null,room=null,state=null,ready=false;
+const symbols=["✦","♡","☼","❀","✧","☾","◇","✿","☆","♧"];
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+function used(){try{return new Set(JSON.parse(localStorage.getItem(KEY)||"[]"))}catch{return new Set()}}
+function makeDeck(){let seen=used(),all=bank.filter(x=>!seen.has(x.q));if(!all.length){localStorage.removeItem(KEY);all=[...bank]}return shuffle(all)}
+function saveQuestion(q){let s=used();s.add(q);try{localStorage.setItem(KEY,JSON.stringify([...s]))}catch{}}
+function fresh(){return {players:["Joueur 1","Joueur 2"],positions:[0,0],turn:0,deck:makeDeck(),current:null,lastRoll:null,done:false}}
+function setStatus(s){$("status").textContent=s}
+function sendState(){if(role==="host"&&conn&&conn.open)conn.send({kind:"state",state});render()}
+function apply(action){
+ if(action==="roll"&&!state.current&&!state.done){
+  const roll=1+Math.floor(Math.random()*6),p=state.turn;state.lastRoll=roll;state.positions[p]=Math.min(TOTAL-1,state.positions[p]+roll);
+  if(!state.deck.length)state.deck=makeDeck();const card=state.deck.shift();state.current=card;saveQuestion(card.q);
+  if(state.positions[p]===TOTAL-1)state.done=true;
+ }
+ if(action==="next"&&state.current){state.current=null;if(state.done){state.done=false;state.positions=[0,0];state.turn=0;state.deck=makeDeck();state.lastRoll=null}else state.turn=1-state.turn}
+ if(action==="restart"){state=fresh()}
+}
+function doAction(a){if(role==="host"){apply(a);sendState()}else if(conn&&conn.open)conn.send({kind:"action",action:a})}
+function render(){
+ if(!state)return;
+ $("players").innerHTML=state.players.map((p,i)=>'<div class="player '+(state.turn===i?'active':'')+'">'+(i===0?'🌙':'⭐')+' '+escapeHtml(p)+' · '+(state.positions[i]+1)+'/30</div>').join("");
+ $("turn").textContent=state.done?"🏁 Arrivée ! Bravo à vous deux.":(state.current?"Prenez le temps de répondre, puis passez le tour.":"Au tour de "+state.players[state.turn]);
+ $("rollResult").textContent=state.lastRoll?"Le dé indique "+state.lastRoll+".":"";
+ const b=$("board");b.innerHTML="";
+ const coords=[];
+ for(let c=0;c<9;c++)coords.push([1,c+1]);
+ for(let r=2;r<=7;r++)coords.push([r,9]);
+ for(let c=8;c>=0;c--)coords.push([8,c+1]);
+ for(let r=7;r>=2;r--)coords.push([r,1]);
+ coords.forEach(([r,c],i)=>{
+  const el=document.createElement("div");el.className="tile"+(i===0?" start":"")+(i===29?" finish":"");
+  el.style.gridRow=r;el.style.gridColumn=c;
+  const pawns=state.positions.map((pos,pi)=>pos===i?(pi===0?"🌙":"⭐"):"").join("");
+  if(pawns)el.classList.add("current");
+  el.innerHTML='<span class="num">'+(i+1)+'</span><span class="symbol">'+(pawns?'<span class="tokens">'+pawns+'</span>':(i===0?'🚩':i===29?'🏁':symbols[i%symbols.length]))+'</span>';
+  b.appendChild(el);
+ });
+ const center=document.createElement("div");center.className="center";center.style.gridColumn="2/9";center.style.gridRow="2/8";
+ center.innerHTML='<div class="mark">✦</div><h2>Votre aventure à deux</h2><p>Un lancer, une question, un nouveau souvenir.</p><p style="color:#e8c77e">'+(conn&&conn.open?'Vous êtes connectés':'En attente du deuxième joueur…')+'</p>';
+ b.appendChild(center);
+ $("questionBox").style.display=state.current?"block":"none";
+ if(state.current)$("question").textContent=state.current.q;
+ const myTurn=state.turn===(role==="host"?0:1);
+ $("roll").disabled=!ready||!conn||!conn.open||!myTurn||!!state.current||state.done;
+ $("next").disabled=!myTurn;
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function showGame(){ $("setup").style.display="none";$("game").style.display="block";render()}
+function attachHostConnection(c){
+ conn=c;c.on("open",()=>{state.players[1]="Joueur 2";c.send({kind:"state",state});render();$("turn").textContent="Votre partenaire est connecté. À vous de jouer !"});
+ c.on("data",d=>{if(d.kind==="hello"){state.players[1]=d.name||"Joueur 2";sendState()}else if(d.kind==="action"){apply(d.action);sendState()}});
+ c.on("close",()=>{setStatus("La connexion a été interrompue.");render()});
+}
+async function create(){
+ if(!ready)return setStatus("Les questions ne sont pas encore chargées.");
+ try{
+  if(!window.Peer)throw new Error("peer library missing");
+  role="host";state=fresh();state.players[0]=$("name").value.trim()||"Joueur 1";
+  peer=new Peer();peer.on("open",id=>{room=id;showGame();$("turn").textContent="Partie créée · partage cet identifiant : "+id;setStatus("En attente du deuxième joueur…")});
+  peer.on("connection",attachHostConnection);peer.on("error",e=>setStatus("Connexion impossible : "+e.type));
+ }catch(e){setStatus("Impossible de créer la partie. Vérifie ta connexion puis réessaie.")}
+}
+async function join(){
+ if(!ready)return setStatus("Les questions ne sont pas encore chargées.");
+ const id=$("room").value.trim();if(!id)return setStatus("Entre l’identifiant de la partie.");
+ try{
+  if(!window.Peer)throw new Error("peer library missing");
+  role="guest";peer=new Peer();peer.on("open",()=>{conn=peer.connect(id,{reliable:true});conn.on("open",()=>{conn.send({kind:"hello",name:$("name").value.trim()||"Joueur 2"});$("turn").textContent="Connecté ! Synchronisation…";showGame()});conn.on("data",d=>{if(d.kind==="state"){state=d.state;render()}});conn.on("error",()=>setStatus("Connexion interrompue."));});
+  peer.on("error",e=>setStatus("Impossible de rejoindre : vérifie l’identifiant ("+e.type+")."));
+ }catch(e){setStatus("Impossible de rejoindre la partie.")}
+}
+$("create").onclick=create;$("join").onclick=join;$("roll").onclick=()=>doAction("roll");$("next").onclick=()=>doAction("next");$("restart").onclick=()=>{if(role==="host"){doAction("restart")}else if(conn&&conn.open)conn.send({kind:"action",action:"restart"})};
+$("copy").onclick=async()=>{try{await navigator.clipboard.writeText(room||"");$("turn").textContent="Identifiant copié : "+room}catch{$("turn").textContent="Identifiant : "+room}};
+(async()=>{try{const r=await fetch("./questions.json");if(!r.ok)throw new Error("HTTP "+r.status);const data=await r.json();bank=Object.entries(data).flatMap(([cat,items])=>items.map(q=>({cat,q})));if(bank.length<30)throw new Error("question bank too small");ready=true;setStatus(bank.length+" questions prêtes. À vous de jouer !")}catch(e){setStatus("Erreur de chargement des questions. Recharge la page.")}})();
 </script></body></html>
