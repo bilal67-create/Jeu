@@ -116,7 +116,7 @@ async function join(){
   peer.on("error",peerError);peer.on("disconnected",()=>setStatus("Connexion au serveur de jeu perdue. Recharge puis réessaie."));
  }catch(e){setStatus("Erreur au démarrage de la connexion : "+(e&&e.message||"vérifie le navigateur et la connexion internet") )}
 }
-$("create").onclick=create;$("solo").onclick=startSolo;$("join").onclick=join;$("roll").onclick=()=>doAction("roll");$("next").onclick=()=>doAction("next");$("restart").onclick=()=>{if(role==="host"||role==="solo"){doAction("restart")}else if(conn&&conn.open)conn.send({kind:"action",action:"restart")};
+$("create").onclick=create;$("solo").onclick=startSolo;$("join").onclick=join;$("roll").onclick=()=>doAction("roll");$("next").onclick=()=>doAction("next");$("restart").onclick=()=>{if(role==="host"||role==="solo"){doAction("restart")}else if(conn&&conn.open)conn.send({kind:"action",action:"restart"})};
 $("copy").onclick=async()=>{try{await navigator.clipboard.writeText(room||"");$("turn").textContent="Identifiant copié : "+room}catch{$("turn").textContent="Identifiant : "+room}};
 (async()=>{try{const r=await fetch("./questions.json");if(!r.ok)throw new Error("HTTP "+r.status);const data=await r.json();bank=Object.entries(data).flatMap(([cat,items])=>items.map(q=>({cat,q})));if(bank.length<30)throw new Error("question bank too small");ready=true;setStatus(bank.length+" questions prêtes. À vous de jouer !")}catch(e){setStatus("Erreur de chargement des questions. Recharge la page.")}})();
 </script></body></html>
