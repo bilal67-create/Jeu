@@ -10,15 +10,15 @@
 <section id="game" class="hidden">
 <div class="panel"><span class="pill" id="roundLabel">DILEMME 1</span><div class="prompt" id="question"></div><div class="sub" id="instruction"></div>
 <div id="dilemmaChoices" class="choices"><button class="btn choice" id="optA"></button><button class="btn choice" id="optB"></button></div>
-<div id="quizEntry" class="hidden"><div class="eyebrow" id="entryLabel">RÉPONSE DE JOUEUR 1</div><textarea id="answerInput" maxlength="180" placeholder="La réponse la plus improbable possible…"></textarea><button class="btn primary wide" id="submitAnswer">Valider ma réponse</button></div>
+<div id="quizEntry" class="hidden"><p class="sub">Répondez chacun votre tour à voix haute. Pas besoin d’écrire : improvisez et faites rire l’autre !</p><button class="btn primary wide" id="oralVote">On a répondu, place au vote !</button></div>
 <div id="reveal" class="hidden"></div>
 </div>
-<div class="row" id="dilemmaActions"><button class="btn soft" id="revealD">Révéler les choix</button><button class="btn primary" id="nextD" disabled>Question suivante</button></div>
-<div id="quizActions" class="hidden"><button class="btn primary wide" id="nextQuiz" disabled>Question suivante</button></div>
+<div class="row" id="dilemmaActions"><button class="btn soft" id="skipD">⏭ Passer</button><button class="btn primary" id="nextD">Question suivante</button></div>
+<div id="quizActions" class="hidden"><div class="row"><button class="btn soft" id="skipQuiz">⏭ Passer</button><button class="btn primary" id="nextQuiz" disabled>Question suivante</button></div></div>
 </section>
 <section id="finished" class="panel hidden"><div class="eyebrow">FIN DE LA PARTIE</div><div class="prompt">Vous avez survécu. À peu près.</div><div id="finalScore" class="sub"></div><button class="btn primary wide" id="again">Rejouer avec de nouvelles questions</button></section>
 <button class="btn soft wide hidden" id="reset">Recommencer à zéro</button>
-<p class="muted">Astuce : en mode quiz, passez le téléphone à l'autre joueur sans regarder la réponse précédente !</p>
+<p class="muted">Toutes les réponses se font à l’oral : posez le téléphone, discutez et amusez-vous !</p>
 </main><script>
 const dilemmas=[
 ["Ne plus jamais pouvoir mentir","Devoir toujours dire exactement ce que tu penses"],
@@ -84,32 +84,34 @@ const quizzes=[
 "Quelle activité proposerais-tu pour un enterrement de vie de souris ?",
 "Si tu ouvrais un musée, quelle collection complètement inutile exposerais-tu ?"
 ];
-let mode="d",deck=[],index=0,scores=[0,0],names=["Joueur 1","Joueur 2"],stage=0,answers=["",""],votes=[null,null],chosen=[null,null];
+let mode="d",deck=[],index=0,scores=[0,0],names=["Joueur 1","Joueur 2"];
 const $=id=>document.getElementById(id);
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 function updateScores(){$("p0").textContent=scores[0];$("p1").textContent=scores[1];$("n0").textContent=names[0].toUpperCase();$("n1").textContent=names[1].toUpperCase()}
 function chooseMode(m){mode=m;$("modeD").classList.toggle("selected",m==="d");$("modeQ").classList.toggle("selected",m==="q")}
 $("modeD").onclick=()=>{chooseMode("d");$("drawResult").textContent=""};$("modeQ").onclick=()=>{chooseMode("q");$("drawResult").textContent=""};$("randomMode").onclick=()=>{const picked=Math.random()<.5?"d":"q";chooseMode(picked);$("drawResult").textContent="🎉 Le hasard a choisi : "+(picked==="d"?"TU PRÉFÈRES ?":"QUIZ ABSURDE !")};
 $("begin").onclick=()=>{names=[$("name0").value.trim()||"Joueur 1",$("name1").value.trim()||"Joueur 2"];scores=[0,0];index=0;deck=shuffle(mode==="d"?dilemmas:quizzes);$("setup").classList.add("hidden");$("game").classList.remove("hidden");$("reset").classList.remove("hidden");updateScores();render()};
-function render(){stage=0;answers=["",""];votes=[null,null];chosen=[null,null];$("reveal").classList.add("hidden");$("nextD").disabled=true;$("nextQuiz").disabled=true;
+function render(){
 if(index>=deck.length){$("game").classList.add("hidden");$("finished").classList.remove("hidden");$("finalScore").textContent=names[0]+" : "+scores[0]+" points · "+names[1]+" : "+scores[1]+" points";return}
 $("roundLabel").textContent=(mode==="d"?"DILEMME ":"QUIZ ABSURDE ")+(index+1)+" / 30";
 $("question").textContent=mode==="d"?"Tu préfères…":deck[index];
-$("instruction").textContent=mode==="d"?"Chacun choisit son camp. Assumez votre réponse et défendez-la !":"Inventez chacun une réponse. La plus drôle remporte le point.";
+$("instruction").textContent=mode==="d"?"Lisez les deux options à voix haute, puis chacun donne son choix et explique pourquoi.":"Répondez chacun votre tour à voix haute. La réponse la plus drôle gagne le point !";
 $("dilemmaChoices").classList.toggle("hidden",mode!=="d");$("quizEntry").classList.toggle("hidden",mode!=="q");$("dilemmaActions").classList.toggle("hidden",mode!=="d");$("quizActions").classList.toggle("hidden",mode!=="q");
-if(mode==="d"){$("optA").textContent=deck[index][0];$("optB").textContent=deck[index][1];$("optA").classList.remove("chosen");$("optB").classList.remove("chosen");$("revealD").disabled=true;$("revealD").textContent="Révéler les choix";$("nextD").disabled=true}
-else{$("entryLabel").textContent="RÉPONSE DE "+names[0].toUpperCase();$("answerInput").value="";$("submitAnswer").textContent="Valider la réponse de "+names[0];$("reveal").innerHTML="";$("reveal").classList.add("hidden");$("submitAnswer").disabled=false}
+$("reveal").classList.add("hidden");$("reveal").innerHTML="";$("nextQuiz").disabled=true;
+if(mode==="d"){$("optA").textContent=deck[index][0];$("optB").textContent=deck[index][1]}
 }
-function showDilemmaReveal(){$("reveal").classList.remove("hidden");$("reveal").innerHTML=names.map((n,i)=>'<div class="answerbox"><b>'+escapeHtml(n)+'</b>'+escapeHtml(chosen[i]===0?deck[index][0]:deck[index][1])+'</div>').join("")+'<p class="sub">Vous avez choisi '+(chosen[0]===chosen[1]?"la même option ! Équipe soudée.":"des options différentes : débat obligatoire 😄")+'</p>';$("nextD").disabled=false}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-["optA","optB"].forEach((id,i)=>$(id).onclick=()=>{if(stage>1)return;chosen[stage]=i;$(id).classList.add("chosen");$("optA").classList.toggle("chosen",chosen[stage]===0);$("optB").classList.toggle("chosen",chosen[stage]===1);stage++;if(stage===1){$("instruction").textContent="Choix enregistré pour "+names[0]+". Passe le téléphone à "+names[1]+" sans montrer ton choix."; $("revealD").disabled=true}else{$("instruction").textContent="Les deux choix sont enregistrés. Révélez-les !";$("revealD").disabled=false}});
-$("revealD").onclick=()=>{if(chosen[0]===null||chosen[1]===null)return;showDilemmaReveal()};
 $("nextD").onclick=()=>{index++;render()};
-$("submitAnswer").onclick=()=>{const val=$("answerInput").value.trim();if(!val)return;answers[stage]=val;stage++;if(stage===1){$("entryLabel").textContent="RÉPONSE DE "+names[1].toUpperCase();$("answerInput").value="";$("answerInput").placeholder="À ton tour d'inventer…";$("submitAnswer").textContent="Valider la réponse de "+names[1]}else{showQuizReveal()}};
-function showQuizReveal(){$("quizEntry").classList.add("hidden");$("reveal").classList.remove("hidden");$("reveal").innerHTML='<div class="answerbox"><b>'+escapeHtml(names[0])+'</b>'+escapeHtml(answers[0])+'</div><div class="answerbox"><b>'+escapeHtml(names[1])+'</b>'+escapeHtml(answers[1])+'</div><p class="sub">Votez ensemble pour la réponse la plus drôle, puis attribuez-lui le point.</p><div class="row"><button class="btn soft" id="vote0">🏆 '+escapeHtml(names[0])+'</button><button class="btn soft" id="vote1">🏆 '+escapeHtml(names[1])+'</button></div><button class="btn primary wide" id="noPoint">Égalité : aucun point</button>'; $("vote0").onclick=()=>award(0);$("vote1").onclick=()=>award(1);$("noPoint").onclick=()=>{finishQuizVote(null)}}
-function award(w){finishQuizVote(w)}
+$("skipD").onclick=()=>{index++;render()};
+$("oralVote").onclick=()=>showQuizReveal();
+function showQuizReveal(){
+$("quizEntry").classList.add("hidden");$("reveal").classList.remove("hidden");
+$("reveal").innerHTML='<p class="sub">Après avoir répondu à voix haute, choisissez ensemble la réponse la plus drôle :</p><div class="row"><button class="btn soft" id="vote0">🏆 '+escapeHtml(names[0])+'</button><button class="btn soft" id="vote1">🏆 '+escapeHtml(names[1])+'</button></div><button class="btn soft wide" id="noPoint">Égalité : aucun point</button>';
+$("vote0").onclick=()=>finishQuizVote(0);$("vote1").onclick=()=>finishQuizVote(1);$("noPoint").onclick=()=>finishQuizVote(null);
+}
 function finishQuizVote(w){if(w!==null)scores[w]++;updateScores();$("reveal").innerHTML+='<p class="sub">'+(w===null?"Égalité !":escapeHtml(names[w])+" remporte le point !")+'</p>';$("reveal").querySelectorAll("button").forEach(b=>b.disabled=true);$("nextQuiz").disabled=false}
 $("nextQuiz").onclick=()=>{index++;render()};
+$("skipQuiz").onclick=()=>{index++;render()};
 $("again").onclick=()=>{scores=[0,0];index=0;deck=shuffle(mode==="d"?dilemmas:quizzes);$("finished").classList.add("hidden");$("game").classList.remove("hidden");updateScores();render()};
 $("reset").onclick=()=>{scores=[0,0];index=0;$("game").classList.add("hidden");$("finished").classList.add("hidden");$("setup").classList.remove("hidden");$("reset").classList.add("hidden");updateScores()};
 </script></body></html>
