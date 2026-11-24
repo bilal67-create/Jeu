@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#20263a"><title>Time's Up — 60 personnages</title>
+<style>
+:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#20243a;background:#f4f5fa}*{box-sizing:border-box}body{margin:0;padding:16px;display:flex;justify-content:center}main{width:min(100%,540px);background:white;border-radius:22px;padding:18px;box-shadow:0 8px 30px #18204418}header{background:#20263a;color:white;border-radius:16px;padding:20px;text-align:center}h1{margin:0;font-size:29px;letter-spacing:2px}header p{margin:6px 0 0;color:#d8dcec;font-size:12px;letter-spacing:1px}.phase{display:inline-block;margin-top:12px;background:#dce8ff;color:#244477;border-radius:20px;padding:6px 12px;font-size:12px;font-weight:800}.scores{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:15px 0}.score{border-radius:14px;padding:12px;text-align:center;background:#f0f2f8}.score.active{outline:2px solid #718de0;background:#e8edff}.score small{font-weight:700;color:#66708a}.score strong{display:block;font-size:30px}.center{text-align:center}.muted{color:#747b90;font-size:13px}.card{border:1px solid #e4e6ee;border-radius:18px;padding:28px 15px;margin:16px 0;text-align:center;min-height:185px;display:flex;flex-direction:column;justify-content:center;gap:9px}.name{font-size:clamp(25px,7vw,35px);font-weight:850;line-height:1.12}.origin{font-weight:750;color:#5269a4;font-size:16px}.kind{font-size:12px;color:#8a90a1}button{border:0;border-radius:12px;padding:13px 12px;font-weight:750;font-size:14px;cursor:pointer}button:active{transform:scale(.98)}.primary{background:#2d9b69;color:white}.secondary{background:#edf0f6;color:#30364a}.row{display:grid;grid-template-columns:1fr 1fr;gap:9px}.wide{width:100%;margin-top:10px}.timer{font-size:27px;font-weight:800;font-variant-numeric:tabular-nums}.hidden{display:none}.notice{background:#f2f4f9;padding:12px;border-radius:12px;font-size:13px;line-height:1.4}
+</style></head><body><main>
+<header><h1>TIME'S UP !</h1><p>ANIMÉS · FILMS · SÉRIES · CÉLÉBRITÉS</p><span class="phase" id="phase">PHASE 1 — INDICES</span></header>
+<div class="scores"><div class="score active" id="s0"><small>ÉQUIPE 1</small><strong id="p0">0</strong></div><div class="score" id="s1"><small>ÉQUIPE 2</small><strong id="p1">0</strong></div></div>
+<div class="center"><b id="turn">Au tour de l'équipe 1</b><div class="muted" id="progress">Carte 1 / 60</div></div>
+<section class="card" id="card"><div class="name" id="name"></div><div class="origin" id="origin"></div><div class="kind" id="kind"></div></section>
+<div class="center"><div class="timer" id="timer">30</div><div class="muted">secondes restantes</div></div>
+<div class="row" style="margin:12px 0"><button class="secondary" id="start">Lancer 30 s</button><button class="secondary" id="stop">Arrêter</button></div>
+<div class="row"><button class="primary" id="found">✓ Trouvé ! +1</button><button class="secondary" id="skip">Passer</button></div>
+<button class="secondary wide" id="next">Fin du tour — équipe suivante</button>
+<div class="notice" style="margin-top:14px" id="rule">Décris le personnage sans prononcer son nom. À la fin des 30 secondes, passez à l'équipe suivante.</div>
+<div id="end" class="hidden center" style="padding:20px 0"><h2 id="endTitle">Phase terminée !</h2><p id="endText"></p><button class="primary wide" id="advance">Commencer la phase des mimes</button></div>
+<button class="secondary wide" id="reset">Recommencer la partie</button><p class="muted center">60 personnages · Les mêmes cartes dans les deux phases · Pas de compte nécessaire</p>
+</main><script>
+const cards=[
+["Blair Waldorf","Gossip Girl","Série"],["Serena van der Woodsen","Gossip Girl","Série"],["Chuck Bass","Gossip Girl","Série"],["Dan Humphrey","Gossip Girl","Série"],["Nate Archibald","Gossip Girl","Série"],["Jenny Humphrey","Gossip Girl","Série"],["Georgina Sparks","Gossip Girl","Série"],["Lily van der Woodsen","Gossip Girl","Série"],
+["Damon Salvatore","The Vampire Diaries","Série"],["Elena Gilbert","The Vampire Diaries","Série"],["Stefan Salvatore","The Vampire Diaries","Série"],["Katherine Pierce","The Vampire Diaries","Série"],["Klaus Mikaelson","The Vampire Diaries","Série"],["Caroline Forbes","The Vampire Diaries","Série"],["Bonnie Bennett","The Vampire Diaries","Série"],["Elijah Mikaelson","The Vampire Diaries","Série"],
+["Meredith Grey","Grey's Anatomy","Série"],["Derek Shepherd","Grey's Anatomy","Série"],["Cristina Yang","Grey's Anatomy","Série"],["Alex Karev","Grey's Anatomy","Série"],["Miranda Bailey","Grey's Anatomy","Série"],["Jackson Avery","Grey's Anatomy","Série"],["Mark Sloan","Grey's Anatomy","Série"],["Arizona Robbins","Grey's Anatomy","Série"],
+["Naruto Uzumaki","Naruto","Animé"],["Sasuke Uchiha","Naruto","Animé"],["Sakura Haruno","Naruto","Animé"],["Monkey D. Luffy","One Piece","Animé"],["Roronoa Zoro","One Piece","Animé"],["Nami","One Piece","Animé"],["Son Goku","Dragon Ball","Animé"],["Vegeta","Dragon Ball","Animé"],["Light Yagami","Death Note","Animé"],["L","Death Note","Animé"],["Satoru Gojo","Jujutsu Kaisen","Animé"],["Levi Ackerman","L'Attaque des Titans","Animé"],
+["Harry Potter","Harry Potter","Film"],["Hermione Granger","Harry Potter","Film"],["Jack Sparrow","Pirates des Caraïbes","Film"],["Le Joker","The Dark Knight","Film"],["Iron Man","Marvel / Avengers","Film"],["Shrek","Shrek","Film"],["Elsa","La Reine des neiges","Film"],["Katniss Everdeen","Hunger Games","Film"],
+["Cristiano Ronaldo","Football","Sportif"],["Zinédine Zidane","Football","Sportif"],["Kylian Mbappé","Football","Sportif"],["Lionel Messi","Football","Sportif"],["Beyoncé","Musique","Chanteuse"],["Eminem","Musique","Rappeur"],["Taylor Swift","Musique","Chanteuse"],["Rihanna","Musique","Chanteuse"],["Brad Pitt","Cinéma","Acteur"],["Leonardo DiCaprio","Cinéma","Acteur"],["Zendaya","Cinéma et télévision","Actrice"],["Angelina Jolie","Cinéma","Actrice"],["The Rock","Cinéma et catch","Acteur"],["Adele","Musique","Chanteuse"],["Michael Jackson","Musique","Chanteur"],["Omar Sy","Cinéma","Acteur"]
+];
+let deck=[],idx=0,phase=1,team=0,scores=[0,0],remaining=30,interval=null;
+const $=id=>document.getElementById(id);
+function shuffle(){deck=[...cards].sort(()=>Math.random()-.5)}
+function stopTimer(){if(interval)clearInterval(interval);interval=null}
+function setTime(n){remaining=n;$("timer").textContent=n}
+function render(){
+ $("phase").textContent=phase===1?"PHASE 1 — INDICES":"PHASE 2 — MIMES";
+ $("turn").textContent="Au tour de l'équipe "+(team+1);
+ $("progress").textContent="Carte "+Math.min(idx+1,deck.length)+" / "+deck.length;
+ $("p0").textContent=scores[0];$("p1").textContent=scores[1];
+ $("s0").classList.toggle("active",team===0);$("s1").classList.toggle("active",team===1);
+ $("rule").textContent=phase===1?"Décris le personnage sans prononcer son nom. À la fin du tour, passez à l'équipe suivante.":"Mime le personnage sans parler, faire de bruit ou écrire.";
+ if(idx>=deck.length){finish();return}
+ $("name").textContent=deck[idx][0];$("origin").textContent=deck[idx][1];$("kind").textContent=deck[idx][2];
+ $("card").classList.remove("hidden");$("end").classList.add("hidden");
+}
+function finish(){stopTimer();$("card").classList.add("hidden");$("end").classList.remove("hidden");$("endTitle").textContent=phase===1?"Première phase terminée !":"Partie terminée !";$("endText").textContent=phase===1?"Vous allez retrouver les mêmes 60 personnages en mimes.":`Score final : équipe 1 ${scores[0]} — équipe 2 ${scores[1]}.`; $("advance").textContent=phase===1?"Commencer la phase des mimes":"Rejouer";$("advance").onclick=()=>{if(phase===1){phase=2;idx=0;team=0;setTime(30);render()}else reset()}}
+function startTimer(){if(interval)return;interval=setInterval(()=>{remaining--;setTime(remaining);if(remaining<=0){stopTimer();$("rule").textContent="Temps écoulé ! Cliquez sur « Fin du tour » pour passer à l'équipe suivante."}},1000)}
+function endTurn(){stopTimer();idx++;team=1-team;setTime(30);render()}
+$("start").onclick=startTimer;$("stop").onclick=stopTimer;
+$("found").onclick=()=>{if(idx>=deck.length)return;scores[team]++;idx++;render()};
+$("skip").onclick=()=>{if(idx<deck.length){idx++;render()}};
+$("next").onclick=endTurn;
+function reset(){stopTimer();shuffle();idx=0;phase=1;team=0;scores=[0,0];setTime(30);render()}
+$("reset").onclick=reset;shuffle();render();
+</script></body></html>
